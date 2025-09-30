@@ -12,6 +12,6 @@ class User(SQLModel,table = True):
     first_name: str = Field(nullable=False)
     last_name: str = Field(nullable=False)
     email: EmailStr = Field(unique=True, index=True, nullable=False)
-    hashed_password: str = Field(nullable=False)
+    password: str = Field(nullable=False)
     created_at: datetime = Field(nullable=False, default_factory=datetime.utcnow)
     updated_at: datetime = Field(nullable=False, default_factory=datetime.utcnow)
