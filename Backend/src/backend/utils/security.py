@@ -1,4 +1,5 @@
 import os
+import bcrypt
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -45,9 +46,14 @@ def verify_access_token(token: str) -> dict:
 ###############################################
 
 def hash_password(password: str) -> str:
-    """Hashes a plaintext password."""
-    return pwd_context.hash(password)
+    """Hashes a plaintext password.
+    
+    NOTE: Bcrypt has a maximum password length of 72 bytes, so we truncate longer passwords.
+    """
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password.decode('utf-8')
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verifies a hashed password against a plaintext password."""
-    return pwd_context.verify(plain_password, hashed_password)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
