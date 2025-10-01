@@ -1,5 +1,6 @@
 import os
 import bcrypt
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -12,6 +13,9 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+# Define OAuth2 scheme for token extraction and validation
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 # Configuration for password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -48,7 +52,7 @@ def verify_access_token(token: str) -> dict:
 def hash_password(password: str) -> str:
     """Hashes a plaintext password.
     
-    NOTE: Bcrypt has a maximum password length of 72 bytes, so we truncate longer passwords.
+    NOTE: Bcrypt has a maximum password length of 72 bytes.
     """
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
