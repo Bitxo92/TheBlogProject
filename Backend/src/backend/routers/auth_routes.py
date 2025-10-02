@@ -56,4 +56,4 @@ def register(new_user: User, db: Session = Depends(get_session)):
     db.commit()
     db.refresh(user)
 
-    return {"id": user.id, "username": user.username, "email": user.email}
+    return user
