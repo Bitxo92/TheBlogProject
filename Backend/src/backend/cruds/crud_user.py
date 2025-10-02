@@ -7,6 +7,10 @@ from datetime import datetime, timezone, timezone
 
 class UserCRUD:
     """ CRUD operations for User model """
+
+###############################################
+# CREATE
+###############################################
  
     @staticmethod
     def create_user(db: Session, user: UserCreate) -> User:
@@ -47,6 +51,10 @@ class UserCRUD:
                 )
 
         return new_user
+    
+###############################################
+# GETTERS
+###############################################
 
     @staticmethod
     def get_user_by_id(db: Session, user_id: UUID) -> User | None:
@@ -145,6 +153,10 @@ class UserCRUD:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No users found")
         return users
 
+###############################################
+# UPDATE
+###############################################
+
     @staticmethod
     def update_user(db: Session, user_id: UUID, user_update: UserUpdate) -> User | None:
         """Update a user in the database.
@@ -170,6 +182,10 @@ class UserCRUD:
         db.commit()
         db.refresh(db_user)
         return db_user
+
+###############################################
+# DELETE
+###############################################
 
     @staticmethod
     def delete_user(db: Session, user_id: UUID) -> str:
