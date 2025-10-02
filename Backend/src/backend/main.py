@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-
-from .routers import auth_routes
+from .routers import auth_routes, user_routes
 from . import database
 
 app = FastAPI(title="The Blog Project")
 
 app.include_router(auth_routes.router)
+app.include_router(user_routes.router)
 
 @app.on_event("startup")
 async def on_startup():
