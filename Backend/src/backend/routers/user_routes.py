@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
-from ..database import get_db
+from ..database import get_session as get_db
 from ..cruds.crud_user import UserCRUD
 from ..schemas.user_schema import UserCreate, UserUpdate, UserRead
 
