@@ -28,29 +28,16 @@ class UserCRUD:
             User: The created user
         """
         new_user = User(**user.model_dump())
-        try:
-            db.add(new_user)
-            db.commit()
-            db.refresh(new_user)
-        except IntegrityError as e:
-            db.rollback()
-            if 'UNIQUE constraint failed: users.username' in str(e.orig):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Username already registered",
-                )
-            elif 'UNIQUE constraint failed: users.email' in str(e.orig):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Email already registered",
-                )
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Internal server error",
-                )
-
+        
+        if db.exec(select(User).where(User.email == new_user.email)).first():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+        if db.exec(select(User).where(User.username == new_user.username)).first():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
         return new_user
+       
     
 ###############################################
 # GETTERS
@@ -206,4 +193,4 @@ class UserCRUD:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         db.delete(db_user)
         db.commit()
-        return f"User {db_user.username} with email: {db_user.email} deleted successfully"
+        
