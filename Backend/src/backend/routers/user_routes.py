@@ -11,7 +11,7 @@ router = APIRouter(prefix="/users",tags=["Users"])
 ###############################################
 # CREATE
 ###############################################
-@router.post("/", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+@router.post("/createuser", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return UserCRUD.create_user(db, user)
 
@@ -41,13 +41,13 @@ def get_all_users(db: Session = Depends(get_db)):
 ###############################################
 # UPDATE
 ###############################################
-@router.put("/{user_id}", response_model=UserRead)
+@router.put("/update/{user_id}", response_model=UserRead)
 def update_user(user_id: UUID, user_update: UserUpdate, db: Session = Depends(get_db)):
     return UserCRUD.update_user(db, user_id, user_update)
 
 ###############################################
 # DELETE
 ###############################################
-@router.delete("/{user_id}", status_code=status.HTTP_200_OK)
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(user_id: UUID, db: Session = Depends(get_db)):
-    return {"message": UserCRUD.delete_user(db, user_id)}
+    return UserCRUD.delete_user(db, user_id)
