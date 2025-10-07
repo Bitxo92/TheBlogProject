@@ -1,11 +1,12 @@
 <script>
-  import { Mail, Lock, Loader2 } from "lucide-svelte";
+  import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-svelte";
   import { onMount } from "svelte";
 
-  let email = "";
-  let password = "";
-  let msg_error = "";
-  let loading = false;
+  let email = $state("");
+  let password = $state("");
+  let msg_error = $state("");
+  let loading = $state(false);
+  let showPassword = $state(false);
 
   async function handleLogin() {
     loading = true;
@@ -28,6 +29,10 @@
     } finally {
       loading = false;
     }
+  }
+
+  function togglePassword() {
+    showPassword = !showPassword;
   }
 </script>
 
@@ -53,27 +58,55 @@
     <input
       id="email"
       type="email"
-      class="input"
-      placeholder="Email"
+      class="input validator"
+      required
+      placeholder="mail@site.com"
       bind:value={email}
       disabled={loading}
     />
+    <div class="validator-hint">Enter valid email address</div>
 
     <label class="label" for="password">
       Password <Lock class="inline w-4 h-4 ml-1" />
     </label>
-    <input
-      id="password"
-      type="password"
-      class="input"
-      placeholder="Password"
-      bind:value={password}
-      disabled={loading}
-    />
+    <div class="relative">
+      <input
+        id="password"
+        type={showPassword ? "text" : "password"}
+        class="input validator"
+        required
+        placeholder="Password"
+        minlength="8"
+        pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).&#123;8,&#125;$"
+        title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
+        bind:value={password}
+        disabled={loading}
+      />
+
+      <button
+        type="button"
+        class="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover: cursor-pointer"
+        onclick={togglePassword}
+        tabindex="-1"
+      >
+        {#if showPassword}
+          <EyeOff class="w-5 h-5" />
+        {:else}
+          <Eye class="w-5 h-5" />
+        {/if}
+      </button>
+    </div>
+
+    <p class="validator-hint">
+      Must be more than 8 characters, including
+      <br />At least one number
+      <br />At least one lowercase letter
+      <br />At least one uppercase letter
+    </p>
 
     <button
       class="btn btn-neutral mt-4 w-full"
-      on:click={handleLogin}
+      onclick={handleLogin}
       disabled={loading}
     >
       {#if loading}
@@ -92,8 +125,6 @@
       </p>
       {#if msg_error}
         <p class="text-sm mt-2 text-error">{msg_error}</p>
-      {:else}
-        <p class="text-sm mt-2 text-success">Login Succesfull!</p>
       {/if}
     </div>
   </fieldset>
